@@ -12,6 +12,11 @@
 
 ### How to start frontend
 
+1. Execute the command to install all libraries 
+   `npm install`
+1. Execute the command to run backend server
+   `npm run dev`
+
 ---
 
 ## Objective
