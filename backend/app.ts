@@ -1,7 +1,20 @@
 import express, { Request, Response } from 'express';
 import morgan from 'morgan';
+import connectDB from "./db/connect";
 
 export const app = express();
+
+// connect to MongoDB
+const startDB = async () => {
+    try {
+        await connectDB();
+        console.log("Connected to MongoDB");
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+startDB();
 
 // middleware
 app.use(express.json());
