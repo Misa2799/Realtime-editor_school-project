@@ -1,5 +1,19 @@
 # React Midterm Project: Real-Time Document Editor with Collaboration
 
+## Get Started
+
+### How to start backend server
+
+1. Execute the command to install all libraries 
+   `npm install`
+1. Get env file (`.env.development`) on Slack and copy and paste it right under backend folder
+1. Execute the command to run backend server
+   `npm run dev`
+
+### How to start frontend
+
+---
+
 ## Objective
 
 Build a real-time document editor with collaboration features using Node.js, React, and Socket.io. The application will allow multiple users to edit a document simultaneously and see changes in real-time.
