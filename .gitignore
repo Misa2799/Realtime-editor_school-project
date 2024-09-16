@@ -1,0 +1,33 @@
+# env
+.env.*
+
+# JavaScript
+*.js
+
+# for Mac users
+.DS_Store
+
+# npm packages
+node_modules
+
+# build
+dist
+
+# environment
+.env*
+!.env.example
+
+# vscode
+.vscode
+
+# test
+coverage
+
+# css (CSS files will be generated automatically by SASS, so we don't need to track them not to waste our time to solve a conflict. We only need to track the SASS files.)
+src/public/css/
+
+# js (JS files will be generated automatically by TypeScript, so we don't need to track them not to waste our time to solve a conflict. We only need to track the TypeScript files.)
+src/public/js/
+
+# eslint
+.eslintcache
