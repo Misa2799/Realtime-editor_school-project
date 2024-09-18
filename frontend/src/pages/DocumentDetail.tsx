@@ -1,21 +1,30 @@
 import { useParams } from "react-router-dom";
-import { useEffect} from "react";
+import { useCallback} from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css"
 
+
 export const DocumentDetail = () => {
     const { id } = useParams(); 
+    const wrapperRef = useCallback((wrapper: HTMLDivElement | null) => {
+        if (wrapper == null) return;
 
-    useEffect(() => {
-        new Quill("#container", {theme: "snow"})
-    }, [])
+        wrapper.innerHTML = "";
+        const editor = document.createElement("div");
+        wrapper.append(editor);
+        new Quill(editor, { theme: "snow" });
+    }, []);
 
     return (
         <div>
-            <h1>Document Detail: {id}</h1>
+            <h1 className= "bg-slate-800">Document Detail: {id}</h1>
             Text Editor
-            <div id="container"></div>
+            <div id="container" ref={wrapperRef} ></div>
         </div>
     );
 }
+
+
+
+
 
