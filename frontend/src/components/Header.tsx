@@ -9,6 +9,8 @@ if (!PUBLISHABLE_KEY) {
 export const Header = () => {
     return (
         <header>
+            <p>This is Header.</p>
+
             <SignedOut>
                 <SignInButton />
             </SignedOut>
