@@ -1,8 +1,8 @@
+import { AuthenticateWithRedirectCallback } from "@clerk/clerk-react";
 import { createBrowserRouter } from "react-router-dom";
 import { RootLayout } from "../layouts/RootLayout";
-import { DocumentList } from "../pages/DocumentList";
 import { DocumentDetail } from "../pages/DocumentDetail";
-import { AuthenticateWithRedirectCallback } from "@clerk/clerk-react";
+import { DocumentList } from "../pages/DocumentList";
 import ProtectedRoutes from "./ProtectedRoutes";
 
 export const router = createBrowserRouter([
