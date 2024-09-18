@@ -1,0 +1,233 @@
+openapi: 3.0.0
+info:
+  title: "Document API"
+  version: "1.0.0"
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCredentials'
+      responses:
+        '201':
+          description: User registered successfully
+
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Log in a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: User logged in successfully
+
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Log out the current user
+      responses:
+        '200':
+          description: User logged out successfully
+        '401':
+          description: Unauthorized
+  /documents:
+    get:
+      tags:
+        - "Document"
+      summary: "Get all documents"
+      parameters:
+        - in: query
+          name: loggedinId
+          schema:
+            type: string
+          description: The number of items to skip before starting to collect the result set
+      responses:
+        '200':
+          description: "A list of documents"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Document"
+  /document:
+    put:
+      tags:
+        - "Document"
+      summary: "Update a document"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PutDocument"
+      responses:
+        '201':
+          description: "Document updated"
+    post:
+      tags: 
+        - "Document"
+      summary: "Create a document"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostDocument"
+      responses:
+        '201':
+          description: "Document created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostResponseDocument"
+    delete:
+      tags:
+        - "Document"
+      summary: "Delete a document"
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: string
+          description: document id
+      responses:
+        '200':
+          description: "Document deleted"
+  /user:
+    get:
+      tags:
+        - "User"
+      summary: "Get user profile"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '200':
+          description: "User profile"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+components:
+  schemas:
+    Document:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        name:
+          type: "string"
+        content:
+          type: "string"
+        author_id:
+          type: "string"
+        is_shared:
+          type: "boolean"
+        created_at:
+          type: "string"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          format: "date-time"
+    PutDocument:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        name:
+          type: "string"
+        content:
+          type: "string"
+        shared_with:
+          type: "array"
+          items:
+            type: "string"
+    PostDocument:
+      type: "object"
+      properties:
+        author_id:
+          type: "string"
+        name:
+          type: "string"
+    PostResponseDocument:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        name:
+          type: "string"
+        author_id:
+          type: "string"
+        created_at:
+          type: "string"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          format: "date-time"
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+    UserCredentials:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - email
+        - password
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        token:
+          type: string
+        user:
+          $ref: '#/components/schemas/UserProfile'
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+    UserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+      
