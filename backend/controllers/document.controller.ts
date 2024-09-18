@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { updateDoc } from "../models/document";
 
-const post = async (req: Request, res: Response) => {
+export const post = async (req: Request, res: Response) => {
   const loggedinId = req.query.loggedinId;
 
   if (!loggedinId) {
@@ -18,5 +18,5 @@ const post = async (req: Request, res: Response) => {
 
   await updateDoc(authorId, name, newName);
 
-  res.status(201).send("Document created");
+  res.status(201).send("Document updated");
 };
