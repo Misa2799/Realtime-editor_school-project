@@ -31,15 +31,7 @@ const documentSchema = new Schema<DocumentType>(
 
 const Document = mongoose.model("Document", documentSchema);
 
-export const updateDoc = async (
-  authorId: string,
-  name: string,
-  newName: string
-) => {
-  const updatedDoc = await Document.findOneAndUpdate(
-    { authorId, name },
-    { name: newName },
-    { new: true }
-  );
-  return updatedDoc;
+export const createDoc = async (authorId: string, name: string) => {
+  const createdDoc = await Document.create({ authorId: authorId, name: name });
+  return createdDoc;
 };

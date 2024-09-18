@@ -1,22 +1,22 @@
 import { Request, Response } from "express";
-import { updateDoc } from "../models/document";
+import { createDoc } from "../models/document";
 
 export const post = async (req: Request, res: Response) => {
-  const loggedinId = req.query.loggedinId;
+  // const loggedinId = req.query.loggedinId;
 
-  if (!loggedinId) {
-    res.status(401).send("No User");
-    return;
-  }
+  // if (!loggedinId) {
+  //   res.status(401).send("No User");
+  //   return;
+  // }
 
-  const { authorId, name, newName } = req.body;
+  const { authorId, name } = req.body;
 
-  if (authorId !== loggedinId) {
-    res.status(401).send("Unauthorized");
-    return;
-  }
+  // if (authorId !== loggedinId) {
+  //   res.status(401).send("Unauthorized");
+  //   return;
+  // }
 
-  await updateDoc(authorId, name, newName);
+  await createDoc(authorId, name);
 
-  res.status(201).send("Document updated");
+  res.status(201).send("Document create");
 };
