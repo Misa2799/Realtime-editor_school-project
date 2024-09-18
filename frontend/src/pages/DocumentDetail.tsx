@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useCallback} from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css"
+import { FaShareAlt } from 'react-icons/fa';
 
 
 export const DocumentDetail = () => {
@@ -17,8 +18,12 @@ export const DocumentDetail = () => {
 
     return (
         <div>
-            <h1 className= "bg-slate-800">Document Detail: {id}</h1>
-            Text Editor
+            <div className="flex items-center border-2 rounded-full p-2 w-auto m-8" style={{ borderColor: '#5c840c' }}>
+                <div className="flex-1 px-4 py-2 text-gray-700">Document name</div>
+                <div className="p-2 cursor-pointer" style={{ color: '#889f28' }} ><FaShareAlt size={20} /></div>
+            </div>
+            {/* <h1 className= "bg-slate-800">Document Detail: {id}</h1> */}
+            {/* Text Editor */}
             <div id="container" ref={wrapperRef} ></div>
         </div>
     );
