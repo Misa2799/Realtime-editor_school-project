@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { SharedDoc } from "./collaboration-sessions";
 
 type DocumentType = {
   id: Schema.Types.ObjectId;
@@ -31,7 +32,32 @@ const documentSchema = new Schema<DocumentType>(
 
 const Document = mongoose.model("Document", documentSchema);
 
-export const createDoc = async (authorId: string, name: string) => {
+const createDoc = async (authorId: string, name: string) => {
   const createdDoc = await Document.create({ authorId: authorId, name: name });
   return createdDoc;
 };
+
+const updateDoc = async (
+  id: string,
+  name: string,
+  content: string,
+  sharedWith: [string]
+) => {
+  const updatedDoc = await Document.findOneAndUpdate(
+    { id: id },
+    { name: name, content: content },
+    { new: true }
+  );
+
+  if (!updatedDoc) {
+    throw new Error("Document not found");
+  }
+
+  return updatedDoc;
+};
+
+const deleteDoc = async (id: string) => {
+  await Document.deleteOne({ id });
+};
+
+export const DocumentModel = { createDoc, updateDoc, deleteDoc };
