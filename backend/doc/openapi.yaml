@@ -48,12 +48,6 @@ paths:
       tags:
         - "Document"
       summary: "Get all documents"
-      parameters:
-        - in: query
-          name: loggedinId
-          schema:
-            type: string
-          description: The number of items to skip before starting to collect the result set
       responses:
         '200':
           description: "A list of documents"
