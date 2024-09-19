@@ -130,14 +130,14 @@ components:
           type: "string"
         content:
           type: "string"
-        author_id:
+        authorId:
           type: "string"
-        is_shared:
+        isShared:
           type: "boolean"
-        created_at:
+        createdAt:
           type: "string"
           format: "date-time"
-        updated_at:
+        updatedAt:
           type: "string"
           format: "date-time"
     PutDocument:
