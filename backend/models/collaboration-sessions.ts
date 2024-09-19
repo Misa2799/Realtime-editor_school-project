@@ -25,3 +25,8 @@ const sharedDocSchema = new Schema<SharedDocType>(
 );
 
 const SharedDoc = mongoose.model("SharedDoc", sharedDocSchema);
+
+export const find = async (authorId: string) => {
+  const sharedDoc = await SharedDoc.find({ usersIdArr: authorId });
+  return sharedDoc;
+}
