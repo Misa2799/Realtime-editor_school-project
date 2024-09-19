@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { DocumentModel, getDocs } from "../models/document";
 import { User } from "../models/user";
-import { SharedDoc } from "../models/collaboration-sessions";
+import { updateSharedDoc } from "../models/collaboration-sessions";
 
 export const post = async (req: Request, res: Response) => {
   // const loggedinId = req.query.loggedinId;
@@ -38,6 +38,9 @@ export const update = async (req: Request, res: Response) => {
   const updatedDoc = await DocumentModel.updateDoc(authorId, name, content, [
     userId,
   ]);
+
+  // update the
+  updateSharedDoc(documentId, userId, []);
 
   // send response
   res.status(201).send("Document updated");
