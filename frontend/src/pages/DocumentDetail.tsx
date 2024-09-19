@@ -4,6 +4,17 @@ import Quill from "quill";
 import "quill/dist/quill.snow.css"
 import { FaShareAlt } from 'react-icons/fa';
 
+const TOOLBAR_OPTIONS = [
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    [{ font: [] }],
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["bold", "italic", "underline"],
+    [{ color: [] }, { background: [] }],
+    [{ script: "sub" }, { script: "super" }],
+    [{ align: [] }],
+    ["image", "blockquote", "code-block"],
+    ["clean"],
+  ]
 
 export const DocumentDetail = () => {
     const { id } = useParams(); 
@@ -13,7 +24,7 @@ export const DocumentDetail = () => {
         wrapper.innerHTML = "";
         const editor = document.createElement("div");
         wrapper.append(editor);
-        new Quill(editor, { theme: "snow" });
+        new Quill(editor, { theme: "snow", modules: { toolbar: TOOLBAR_OPTIONS } });
     }, []);
 
     useEffect(() => {
@@ -25,7 +36,7 @@ export const DocumentDetail = () => {
         // add class Tailwind for `ql-editor`
         document.querySelectorAll('.ql-editor').forEach((element) => {
             element.classList.add( 
-            'w-[1430px]',   //816px 
+            'w-[1430px]',   //1430px,816px 
             'min-h-[1056px]', 
             'p-[96px]', 
             'm-4',
