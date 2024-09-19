@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Estilos adicionales si son necesarios */
+.menu-btn {
+	/* Opcional: Estilo del botón de tres puntos si quieres algo específico */
+}
+
+/* Si necesitas algún ajuste de estilo que no logres con Tailwind */
+.popup-menu.show {
+	/* Esto se puede manejar con las clases de Tailwind también, pero si prefieres tenerlo separado */
+	display: block;
+}
+
+/* Opcional: Ajustes si deseas añadir cualquier personalización más allá de lo que Tailwind ofrece */
