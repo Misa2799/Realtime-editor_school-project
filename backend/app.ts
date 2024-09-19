@@ -1,6 +1,8 @@
+import { ClerkExpressWithAuth } from "@clerk/clerk-sdk-node";
 import express, { Request, Response } from "express";
 import morgan from "morgan";
 import connectDB from "./db/connect";
+import { authMiddleware } from "./middleware/authMiddleware";
 import { router as documentRouter } from "./routes/document.router";
 
 export const app = express();
@@ -19,10 +21,12 @@ startDB();
 // middleware
 app.use(express.json());
 app.use(morgan("dev"));
+app.use(ClerkExpressWithAuth());
 
 // routes
-app.get("/", (req: Request, res: Response) => {
-	res.send("Hello World!");
+// this hello route is just a test route
+app.get("/hello", authMiddleware, (req: Request, res: Response) => {
+	res.send("Hello World");
 });
 app.use("/document", documentRouter);
 
