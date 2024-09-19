@@ -20,10 +20,10 @@ const startDB = async () => {
 startDB();
 
 // middleware
+app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(ClerkExpressWithAuth());
-app.use(cors());
 
 // routes
 // this hello route is just a test route
