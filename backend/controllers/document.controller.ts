@@ -39,8 +39,8 @@ export const update = async (req: Request, res: Response) => {
     userId,
   ]);
 
-  // update the
-  updateSharedDoc(documentId, userId, []);
+  // update the shared
+  const updatedShareDoc = await updateSharedDoc(documentId, userId, []);
 
   // send response
   res.status(201).send("Document updated");
