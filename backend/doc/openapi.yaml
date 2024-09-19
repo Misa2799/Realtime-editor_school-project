@@ -43,17 +43,11 @@ paths:
           description: User logged out successfully
         '401':
           description: Unauthorized
-  /documents:
+  /document:
     get:
       tags:
         - "Document"
       summary: "Get all documents"
-      parameters:
-        - in: query
-          name: loggedinId
-          schema:
-            type: string
-          description: The number of items to skip before starting to collect the result set
       responses:
         '200':
           description: "A list of documents"
@@ -63,7 +57,6 @@ paths:
                 type: "array"
                 items:
                   $ref: "#/components/schemas/Document"
-  /document:
     put:
       tags:
         - "Document"
@@ -137,14 +130,14 @@ components:
           type: "string"
         content:
           type: "string"
-        author_id:
+        authorId:
           type: "string"
-        is_shared:
+        isShared:
           type: "boolean"
-        created_at:
+        createdAt:
           type: "string"
           format: "date-time"
-        updated_at:
+        updatedAt:
           type: "string"
           format: "date-time"
     PutDocument:

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DocumentModel } from "../models/document";
+import { DocumentModel, getDocs } from "../models/document";
 import { User } from "../models/user";
 import { SharedDoc } from "../models/collaboration-sessions";
 
@@ -68,4 +68,19 @@ export const clear = async (req: Request, res: Response) => {
   SharedDoc.deleteOne({ id });
 
   res.status(201).send("Document deleted");
+};
+
+export const get = async (req: Request, res: Response) => {
+  // FIXME: uncomment this line after merging the PR that implemented auth with Clerk
+  // const { loggedinId } = req.loggedInUserId;
+  const loggedinId = "1";
+
+  if (!loggedinId) {
+    res.status(401).send("No User");
+    return;
+  }
+
+  const docs = await getDocs(loggedinId);
+
+  res.status(200).send(docs);
 };
