@@ -43,7 +43,7 @@ paths:
           description: User logged out successfully
         '401':
           description: Unauthorized
-  /documents:
+  /document:
     get:
       tags:
         - "Document"
@@ -57,7 +57,6 @@ paths:
                 type: "array"
                 items:
                   $ref: "#/components/schemas/Document"
-  /document:
     put:
       tags:
         - "Document"
