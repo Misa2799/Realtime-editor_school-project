@@ -40,7 +40,6 @@ export const DocumentDetail = () => {
         // add class Tailwind for `ql-editor`
         document.querySelectorAll('.ql-editor').forEach((element) => {
             element.classList.add( 
-            'w-[1430px]',   //1430px,816px 
             'min-h-[1056px]', 
             'p-[96px]', 
             'm-4',
