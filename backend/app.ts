@@ -1,13 +1,12 @@
 import { ClerkExpressWithAuth } from "@clerk/clerk-sdk-node";
+import cors from "cors";
 import express, { Request, Response } from "express";
+import { createServer } from "http";
 import morgan from "morgan";
+import { Server } from "socket.io";
 import connectDB from "./db/connect";
 import { authMiddleware } from "./middleware/authMiddleware";
 import { router as documentRouter } from "./routes/document.router";
-import cors from "cors";
-import { Server } from "socket.io";
-import { createServer } from "http";
-
 
 export const app = express();
 
@@ -22,10 +21,16 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
     console.log("new user connected", socket.id);
+
+    socket.on("join-room", (documentId) => {
+        console.log("joined room: ", documentId);
+        socket.join(documentId);
+    });
 	
-	socket.on("send-changes", (delta) => {
+	socket.on("send-changes", (delta, id) => {
         console.log("new text:", delta);
-		socket.broadcast.emit("send-changes",delta);
+        console.log("document id:", id);
+		socket.broadcast.to(id).emit("send-changes",delta);
     });
 
     socket.on("disconnect", () => {

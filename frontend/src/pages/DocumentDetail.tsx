@@ -39,14 +39,15 @@ export const DocumentDetail = () => {
         quill.on('text-change', (delta: any, oldDelta: any, source: any) => {
             if (source === "user") {
                 console.log("text-changed", delta, oldDelta, source);
-                socket.emit("send-changes", delta)
+                socket.emit("send-changes", delta, id)
             }
         });
     }, []);
 
     //socket.io-client
     useEffect (() => {
-        // const socket = io("http://localhost:3001")
+        socket.emit("join-room", id);
+
         socket.on("send-changes", (data: any) => {
             console.log("This is socket",data)
 
