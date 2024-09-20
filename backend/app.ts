@@ -33,6 +33,12 @@ io.on("connection", (socket) => {
 		socket.broadcast.to(id).emit("send-changes",delta);
     });
 
+    socket.on("send-selection-changes", (range, id) => {
+        console.log("new selection:", range);
+        console.log("document id:", id);
+        socket.broadcast.to(id).emit("send-selection-changes", range);
+    })
+
     socket.on("disconnect", () => {
         console.log("User disconnected");
     });

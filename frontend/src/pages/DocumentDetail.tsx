@@ -4,6 +4,7 @@ import Quill from "quill";
 import "quill/dist/quill.snow.css"
 import { FaShareAlt } from 'react-icons/fa';
 import { io } from 'socket.io-client'
+import QuillCursors from 'quill-cursors';
 
 const TOOLBAR_OPTIONS = [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -33,7 +34,17 @@ export const DocumentDetail = () => {
         wrapper.innerHTML = "";
         const editor = document.createElement("div");
         wrapper.append(editor);
-        const quill = new Quill(editor, { theme: "snow", modules: { toolbar: TOOLBAR_OPTIONS } });
+        Quill.register('modules/cursors', QuillCursors);
+        const quill = new Quill(
+            editor,
+            { 
+                theme: "snow",
+                modules: {
+                    cursors: true,
+                    toolbar: TOOLBAR_OPTIONS
+                }
+            }
+        );
         setQuill(quill);
 
         quill.on('text-change', (delta: any, oldDelta: any, source: any) => {
@@ -42,6 +53,13 @@ export const DocumentDetail = () => {
                 socket.emit("send-changes", delta, id)
             }
         });
+
+        quill.on("selection-change", (range: any, oldRange: any, source: any) => {
+            if (source === "user") {
+                console.log("selection-changed", range, oldRange, source);
+                socket.emit("send-selection-changes", range, id)
+            }
+        })
     }, []);
 
     //socket.io-client
@@ -53,6 +71,18 @@ export const DocumentDetail = () => {
 
             setDelta(data)
             console.log("received-delta(useEffect)", receivedDelta);
+        })
+
+        socket.on("send-selection-changes", (range) => {
+            console.log("received-selection: ", range);
+            
+            if (quill != undefined) {
+                const cursors: any = quill.getModule("cursors");
+                // FIXME: need to get user id with Clerk
+                cursors.createCursor(id, "Mika", "#5C840C");
+                cursors.moveCursor(id, range);
+                cursors.toggleFlag(id, true);
+            }
         })
 
         if (quill != undefined) {
