@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState} from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css"
 import { FaShareAlt } from 'react-icons/fa';
+import { io } from 'socket.io-client'
 
 const TOOLBAR_OPTIONS = [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -29,6 +30,15 @@ export const DocumentDetail = () => {
         const editor = document.createElement("div");
         wrapper.append(editor);
         new Quill(editor, { theme: "snow", modules: { toolbar: TOOLBAR_OPTIONS } });
+    }, []);
+
+    //socket.io-client
+    useEffect (() => {
+        const socket = io("http://localhost:3001")
+
+        return () => {
+            socket.disconnect()
+        }
     }, []);
 
     useEffect(() => {

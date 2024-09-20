@@ -7,7 +7,8 @@
 		"build": "tsc --watch",
 		"server": "nodemon dist/index.js",
 		"dev": "concurrently \"npm run build\" \"npm run server\"",
-		"dev2": "tsnd --inspect -- index.ts"
+		"dev2": "tsnd --inspect -- index.ts",
+		"devStart" : "nodemon app.ts"
 	},
 	"keywords": [],
 	"author": "",
