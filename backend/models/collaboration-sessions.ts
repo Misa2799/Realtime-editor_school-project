@@ -39,12 +39,8 @@ export const findSharedDoc = async (documentId: string) => {
 };
 
 export const clearSharedDoc = async (documentId: string) => {
-  await SharedDoc.deleteOne({ id: documentId });
+  await SharedDoc.deleteOne({ documentId: documentId });
 };
-
-// export const create = (documentId: string, userId: string, usersIdArr: []) => {
-//   SharedDoc.create({ documentId: documentId, usersIdArr: [userId] });
-// };
 
 /**
  * Update shared document

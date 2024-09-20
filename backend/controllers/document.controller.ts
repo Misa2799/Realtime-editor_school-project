@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import { DocumentModel, getDocs } from "../models/document";
-import { User } from "../models/user";
-import { updateSharedDoc } from "../models/collaboration-sessions";
+import {
+  clearSharedDoc,
+  updateSharedDoc,
+} from "../models/collaboration-sessions";
 
 export const post = async (req: Request, res: Response) => {
   // const loggedinId = req.query.loggedinId;
@@ -53,9 +55,10 @@ export const update = async (req: Request, res: Response) => {
 };
 
 export const clear = async (req: Request, res: Response) => {
-  const { documentId } = req.body;
+  const id = req.query.id as string;
 
-  await DocumentModel.deleteDoc(documentId);
+  await DocumentModel.deleteDoc(id);
+  await clearSharedDoc(id);
 
   res.status(201).send("Document deleted");
 };

@@ -1,8 +1,8 @@
 import mongoose, { Schema } from "mongoose";
-import { clearSharedDoc, find } from "./collaboration-sessions";
+import { find } from "./collaboration-sessions";
 
 type DocumentType = {
-  id: Schema.Types.ObjectId;
+  _id: Schema.Types.ObjectId;
   name: string;
   content: string;
   authorId: string;
@@ -67,8 +67,7 @@ const updateDoc = async (
 };
 
 const deleteDoc = async (documentId: string) => {
-  await Document.deleteOne({ documentId });
-  await clearSharedDoc(documentId);
+  await Document.deleteOne({ _id: documentId });
 };
 
 export const DocumentModel = { createDoc, updateDoc, deleteDoc };
