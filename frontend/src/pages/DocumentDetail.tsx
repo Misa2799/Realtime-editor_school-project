@@ -5,6 +5,7 @@ import "quill/dist/quill.snow.css"
 import { FaShareAlt } from 'react-icons/fa';
 import { io } from 'socket.io-client'
 import QuillCursors from 'quill-cursors';
+import { useUser } from "@clerk/clerk-react";
 
 const TOOLBAR_OPTIONS = [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -16,7 +17,7 @@ const TOOLBAR_OPTIONS = [
     [{ align: [] }],
     ["image", "blockquote", "code-block"],
     ["clean"],
-  ]
+]
 
 export const DocumentDetail = () => {
     const { id } = useParams(); 
@@ -25,6 +26,11 @@ export const DocumentDetail = () => {
     const [email, setEmail] = useState('');
     const [receivedDelta, setDelta] = useState<any>();
     const [quill, setQuill] = useState<Quill>();
+
+    const { user } = useUser();
+    const currentUserId = user?.id || "";
+    const currentUserName = user?.username || "";
+    console.log("currentUser:", currentUserId, currentUserName);
 
     const socket = io("http://localhost:3001")
 
@@ -57,7 +63,7 @@ export const DocumentDetail = () => {
         quill.on("selection-change", (range: any, oldRange: any, source: any) => {
             if (source === "user") {
                 console.log("selection-changed", range, oldRange, source);
-                socket.emit("send-selection-changes", range, id)
+                socket.emit("send-selection-changes", range, id, currentUserId, currentUserName)
             }
         })
     }, []);
@@ -73,15 +79,21 @@ export const DocumentDetail = () => {
             console.log("received-delta(useEffect)", receivedDelta);
         })
 
-        socket.on("send-selection-changes", (range) => {
+        socket.on("send-selection-changes", (range, editorId, editorUserName) => {
             console.log("received-selection: ", range);
+            console.log("editorId: ", editorId);
+            console.log("editorUserName: ", editorUserName);
+
+            const cursorColor = generateRandomColor();
             
             if (quill != undefined) {
-                const cursors: any = quill.getModule("cursors");
-                // FIXME: need to get user id with Clerk
-                cursors.createCursor(id, "Mika", "#5C840C");
-                cursors.moveCursor(id, range);
-                cursors.toggleFlag(id, true);
+                // don't show cursor for current user
+                if (editorId != currentUserId) {
+                    const cursors: any = quill.getModule("cursors");
+                    cursors.createCursor(editorId, editorUserName, cursorColor);
+                    cursors.moveCursor(editorId, range);
+                    cursors.toggleFlag(editorId, true);
+                }   
             }
         })
 
@@ -171,7 +183,11 @@ export const DocumentDetail = () => {
     );
 }
 
+function generateRandomColor(): string {
+    const randomColor = Math.floor(Math.random() * 0xFFFFFF).toString(16);
 
+    return `#${randomColor.padStart(6, '0')}`;
+}
 
 
 

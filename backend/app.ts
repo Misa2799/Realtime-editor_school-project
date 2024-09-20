@@ -33,10 +33,13 @@ io.on("connection", (socket) => {
 		socket.broadcast.to(id).emit("send-changes",delta);
     });
 
-    socket.on("send-selection-changes", (range, id) => {
+    socket.on("send-selection-changes", (range, id, editorId, editorUserName) => {
         console.log("new selection:", range);
         console.log("document id:", id);
-        socket.broadcast.to(id).emit("send-selection-changes", range);
+        console.log("editor id:", editorId);
+        console.log("editor username:", editorUserName);
+        
+        socket.broadcast.to(id).emit("send-selection-changes", range, editorId, editorUserName);
     })
 
     socket.on("disconnect", () => {
