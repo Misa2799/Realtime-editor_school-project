@@ -22,11 +22,10 @@ export const DocumentDetail = () => {
 
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [email, setEmail] = useState('');
+    const [receivedDelta, setDelta] = useState<any>();
+    const [quill, setQuill] = useState<Quill>();
 
     const socket = io("http://localhost:3001")
-        // return () => {
-        //     socket.disconnect()
-        // }
 
     const wrapperRef = useCallback((wrapper: HTMLDivElement | null) => {
         if (wrapper == null) return;
@@ -35,10 +34,10 @@ export const DocumentDetail = () => {
         const editor = document.createElement("div");
         wrapper.append(editor);
         const quill = new Quill(editor, { theme: "snow", modules: { toolbar: TOOLBAR_OPTIONS } });
+        setQuill(quill);
 
         quill.on('text-change', (delta: any, oldDelta: any, source: any) => {
             console.log("text-changed", delta, oldDelta, source);
-            // TODO: try to call emit method of websoket here
             socket.emit("send-changes", delta)
         });
     }, []);
@@ -46,15 +45,21 @@ export const DocumentDetail = () => {
     //socket.io-client
     useEffect (() => {
         // const socket = io("http://localhost:3001")
-                socket.on("send-changes", (data) => {
-                    console.log("This is socket",data)
-                    
-                })
+        socket.on("send-changes", (data: any) => {
+            console.log("This is socket",data)
+
+            setDelta(data)
+            console.log("received-delta(useEffect)", receivedDelta);
+        })
+
+        if (quill != undefined) {
+            quill.updateContents(receivedDelta)
+        }
 
         return () => {
             socket.off("send-changes")
         }
-    }, []);
+    }, [receivedDelta]);
 
     useEffect(() => {
         // add class Tailwind for `ql-container`
