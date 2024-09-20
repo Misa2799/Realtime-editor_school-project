@@ -23,22 +23,33 @@ export const DocumentDetail = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [email, setEmail] = useState('');
 
+    const socket = io("http://localhost:3001")
+        // return () => {
+        //     socket.disconnect()
+        // }
+
     const wrapperRef = useCallback((wrapper: HTMLDivElement | null) => {
         if (wrapper == null) return;
 
         wrapper.innerHTML = "";
         const editor = document.createElement("div");
         wrapper.append(editor);
-        new Quill(editor, { theme: "snow", modules: { toolbar: TOOLBAR_OPTIONS } });
+        const quill = new Quill(editor, { theme: "snow", modules: { toolbar: TOOLBAR_OPTIONS } });
+
+        quill.on('text-change', (delta: any, oldDelta: any, source: any) => {
+            console.log("text-changed", delta, oldDelta, source);
+            // TODO: try to call emit method of websoket here
+            socket.emit("send-changes", delta)
+        });
     }, []);
 
     //socket.io-client
     useEffect (() => {
-        const socket = io("http://localhost:3001")
+        // const socket = io("http://localhost:3001")
 
-        return () => {
-            socket.disconnect()
-        }
+        // return () => {
+        //     socket.disconnect()
+        // }
     }, []);
 
     useEffect(() => {

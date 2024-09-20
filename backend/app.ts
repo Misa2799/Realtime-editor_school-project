@@ -21,7 +21,15 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-    console.log("connected");
+    console.log("new user connected");
+	
+	socket.on("send-changes", (delta) => {
+        console.log("new text:", delta);
+    });
+
+    socket.on("disconnect", () => {
+        console.log("User disconnected");
+    });
 });
 
 // connect to MongoDB
