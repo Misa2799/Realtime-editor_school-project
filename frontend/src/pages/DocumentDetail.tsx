@@ -37,8 +37,10 @@ export const DocumentDetail = () => {
         setQuill(quill);
 
         quill.on('text-change', (delta: any, oldDelta: any, source: any) => {
-            console.log("text-changed", delta, oldDelta, source);
-            socket.emit("send-changes", delta)
+            if (source === "user") {
+                console.log("text-changed", delta, oldDelta, source);
+                socket.emit("send-changes", delta)
+            }
         });
     }, []);
 
