@@ -46,10 +46,14 @@ export const DocumentDetail = () => {
     //socket.io-client
     useEffect (() => {
         // const socket = io("http://localhost:3001")
+                socket.on("send-changes", (data) => {
+                    console.log("This is socket",data)
+                    
+                })
 
-        // return () => {
-        //     socket.disconnect()
-        // }
+        return () => {
+            socket.off("send-changes")
+        }
     }, []);
 
     useEffect(() => {

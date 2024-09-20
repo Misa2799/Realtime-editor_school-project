@@ -21,10 +21,11 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-    console.log("new user connected");
+    console.log("new user connected", socket.id);
 	
 	socket.on("send-changes", (delta) => {
         console.log("new text:", delta);
+		socket.broadcast.emit("send-changes",delta);
     });
 
     socket.on("disconnect", () => {
