@@ -4,6 +4,7 @@ import morgan from "morgan";
 import connectDB from "./db/connect";
 import { authMiddleware } from "./middleware/authMiddleware";
 import { router as documentRouter } from "./routes/document.router";
+import cors from "cors";
 
 export const app = express();
 
@@ -19,6 +20,7 @@ const startDB = async () => {
 startDB();
 
 // middleware
+app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(ClerkExpressWithAuth());
