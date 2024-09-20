@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { clear, create, find, findSharedDoc } from "./collaboration-sessions";
+import { clearSharedDoc, find } from "./collaboration-sessions";
 
 type DocumentType = {
   id: Schema.Types.ObjectId;
@@ -49,13 +49,12 @@ const createDoc = async (authorId: string, name: string) => {
 
 const updateDoc = async (
   documentId: string,
-  name: string,
-  content: string,
-  sharedWith: [string]
+  name?: string,
+  content?: string
 ) => {
   // documents table
   const updatedDoc = await Document.findOneAndUpdate(
-    { id: documentId },
+    { _id: documentId },
     { name: name, content: content },
     { new: true }
   );
@@ -69,7 +68,7 @@ const updateDoc = async (
 
 const deleteDoc = async (documentId: string) => {
   await Document.deleteOne({ documentId });
-  await clear(documentId);
+  await clearSharedDoc(documentId);
 };
 
 export const DocumentModel = { createDoc, updateDoc, deleteDoc };

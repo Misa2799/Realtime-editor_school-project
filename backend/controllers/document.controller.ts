@@ -23,24 +23,30 @@ export const post = async (req: Request, res: Response) => {
   res.status(201).send("Document created");
 };
 
+// when a shared btn and the edit btn is clicked, call the update method
 export const update = async (req: Request, res: Response) => {
-  const { email, documentId, authorId, name, content } = req.body;
+  const { id, name, content, sharedWith } = req.body;
 
-  // find user based on email
-  const user = await User.findOne({ email });
-  // if (!user) {
-  //   res.status(404).send("User not found");
-  // }
+  if (name || content) {
+    // pattern1: id, name
+    // pattern2: id, content
+    // update only the document table
+    const updatedDoc = await DocumentModel.updateDoc(id, name, content);
+  } else {
+    // pattern3: id, sharedWith
+    // update the collaboration-sessions table
 
-  const userId = user?.id;
+    // find user based on email
+    let userIds: string[] = [];
+    sharedWith.forEach(async (email: string) => {
+      // FIXME: change this find method to the method that Clerk will provides later
+      const userId = "2";
+      userIds.push(userId);
+    });
 
-  // update the document
-  const updatedDoc = await DocumentModel.updateDoc(authorId, name, content, [
-    userId,
-  ]);
-
-  // update the shared
-  const updatedShareDoc = await updateSharedDoc(documentId, userId, []);
+    // update the collaboration sessions table
+    const updatedShareDoc = await updateSharedDoc(id, userIds);
+  }
 
   // send response
   res.status(201).send("Document updated");
