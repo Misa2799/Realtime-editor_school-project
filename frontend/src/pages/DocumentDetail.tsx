@@ -4,6 +4,7 @@ import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import { FaShareAlt } from "react-icons/fa";
 import { Button } from "../components/Button";
+import CancelModal from "../components/CancelModal";
 
 const TOOLBAR_OPTIONS = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -22,6 +23,7 @@ export const DocumentDetail = () => {
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [email, setEmail] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   const wrapperRef = useCallback((wrapper: HTMLDivElement | null) => {
     if (wrapper == null) return;
@@ -71,12 +73,11 @@ export const DocumentDetail = () => {
   };
 
   // function to cancel document and go back to List page
-  const handleCancel = () => {
+  const handleCancelModal = () => {
     console.log("cancel is clicked");
     // display modal and set "Cancel a document?", Yes and No button
-
+    setIsOpen(true);
     // if Yes, go back to List page
-    // if No, close modal
   };
 
   // function to send data to DB
@@ -95,12 +96,13 @@ export const DocumentDetail = () => {
         <div className="flex-1 px-2 py-2 text-gray-700">
           <h1>Document Detail: {id}</h1>
         </div>
-        <div className="mx-8">
+        <div className="saveBtn mx-8">
           <Button
             className="mr-6 py-2.5 px-5 me-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-500 dark:text-gray-100 dark:border-gray-300 dark:hover:text-white dark:hover:bg-gray-400"
-            onClick={handleCancel}
+            onClick={handleCancelModal}
             children={"CANCEL"}
           />
+          {isOpen && <CancelModal setIsOpen={setIsOpen} />}
 
           <Button
             className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
