@@ -165,7 +165,6 @@ export const DocumentDetail = () => {
                 const response = await fetch("http://localhost:3000/document", {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
-                    credentials: "include",
                     body: JSON.stringify({
                         id: id,
                         sharedWith: [email]
