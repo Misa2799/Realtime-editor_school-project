@@ -211,14 +211,45 @@ export const DocumentDetail = () => {
     console.log("cancel is clicked");
     // display modal and set "Cancel a document?", Yes and No button
     setIsOpen(true);
-    // if Yes, go back to List page
   };
 
   // function to send data to DB
-  const handleSave = () => {
+  const handleSave = async () => {
     console.log("save is clicked");
-    // send text to DB
-    // display a message "Saved!"
+
+    // get delta with quill and convert to string
+    const delta = quill?.getContents();
+    const deltaString = JSON.stringify(delta);
+    console.log("deltaString(useEffect):", deltaString);
+
+    // save it to database as content
+    // call PUT /document API here
+
+    try {
+      const token = await getToken(); // Token from Clerk
+      const response = await fetch("http://localhost:3000/document", {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`, // IMPORTANT! Don't forget to send this to the server
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: id,
+          content: deltaString,
+        }),
+      });
+
+      if (response.ok) {
+        alert("Document saved successfully!");
+        console.log("Document saved:", deltaString);
+      } else {
+        alert("Error saving the document");
+        console.log("Error response:", await response.json());
+      }
+    } catch (error) {
+      alert("Error while saving the document");
+      console.error("Error:", error);
+    }
   };
 
   return (
