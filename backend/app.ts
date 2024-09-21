@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 import connectDB from "./db/connect";
 import { authMiddleware } from "./middleware/authMiddleware";
 import { router as documentRouter } from "./routes/document.router";
+import { router as userRouter } from "./routes/user.router";
 
 export const app = express();
 
@@ -72,6 +73,7 @@ app.get("/hello", authMiddleware, (req: Request, res: Response) => {
 	res.send("Hello World");
 });
 app.use("/document", documentRouter);
+app.use("/user", userRouter);
 
 app.all("*", (req: Request, res: Response) => {
 	res.status(404).send({ error: `Not Found Route - ${req.method} ${req.path}` });

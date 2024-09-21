@@ -1,34 +1,29 @@
-import mongoose, { Schema } from "mongoose";
+import { createClerkClient, EmailAddress } from "@clerk/clerk-sdk-node";
 
 type UserType = {
-  id: Schema.Types.ObjectId;
-  username: string;
-  email: string;
-  passwordHash: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
+  id: string;
+  username?: string;
+  email?: string;
+}
 
-const userSchema = new Schema<UserType>(
-  {
-    username: {
-      type: String,
-      required: true,
-    },
+const clerkClient = createClerkClient({
+  secretKey: process.env.CLERK_SECRET_KEY
+});
 
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    passwordHash: {
-      type: String,
-      required: true,
-    },
-  },
-  {
-    timestamps: true,
+export const get = async (email: string) => {
+  const users = await clerkClient.users.getUserList({
+    emailAddress: [email]
+  });
+
+  if (users.data.length === 0) {
+    return null
   }
-);
+  
+  const userObj: UserType = {
+    id: users.data[0].id,
+    username: users.data[0].username || undefined,
+    email: users.data[0].primaryEmailAddress?.emailAddress || undefined
+  }
 
-export const User = mongoose.model("User", userSchema);
+  return userObj;
+};

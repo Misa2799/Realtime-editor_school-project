@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
-import { DocumentModel, getDocs } from "../models/document";
 import {
   clearSharedDoc,
   updateSharedDoc,
 } from "../models/collaboration-sessions";
+import { DocumentModel, getDocs } from "../models/document";
+import { get as getFromModel } from "../models/user";
 
 export const post = async (req: Request, res: Response) => {
   // const loggedinId = req.query.loggedinId;
@@ -41,9 +42,12 @@ export const update = async (req: Request, res: Response) => {
     // find user based on email
     let userIds: string[] = [];
     sharedWith.forEach(async (email: string) => {
-      // FIXME: change this find method to the method that Clerk will provides later
-      const userId = "2";
-      userIds.push(userId);
+      const user = await getFromModel(email);
+      if (!user?.id) {
+        res.status(404).send("User not found");
+        return
+      }
+      userIds.push(user?.id);
     });
 
     // update the collaboration sessions table
