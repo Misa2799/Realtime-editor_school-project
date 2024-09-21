@@ -111,9 +111,13 @@ export const DocumentList = () => {
 			// Agregamos un console.log del id que se enviará al DELETE request
 			console.log(`Eliminando documento con id: ${deleteDocumentId}`);
 
+            const token = await getToken();
 			// Hacemos el DELETE request al backend con el id en la URL
 			const response = await fetch(`${API_URL}?id=${deleteDocumentId}`, {
 				method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
 			});
 
 			if (!response.ok) {
