@@ -17,6 +17,7 @@ const io = new Server(server, {
     cors: { 
         origin: ["http://localhost:5173", "http://localhost:5174"],
         methods: ["GET", "POST"],
+        credentials: true
     } 
 });
 
@@ -72,8 +73,8 @@ app.use(ClerkExpressWithAuth());
 app.get("/hello", authMiddleware, (req: Request, res: Response) => {
 	res.send("Hello World");
 });
-app.use("/document", documentRouter);
-app.use("/user", userRouter);
+app.use("/document", authMiddleware, documentRouter);
+app.use("/user", authMiddleware, userRouter);
 
 app.all("*", (req: Request, res: Response) => {
 	res.status(404).send({ error: `Not Found Route - ${req.method} ${req.path}` });

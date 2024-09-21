@@ -6,6 +6,7 @@ import { FaShareAlt } from 'react-icons/fa';
 import { io } from 'socket.io-client'
 import QuillCursors from 'quill-cursors';
 import { useUser } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/clerk-react";
 
 const TOOLBAR_OPTIONS = [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -31,8 +32,11 @@ export const DocumentDetail = () => {
     const currentUserId = user?.id || "";
     const currentUserName = user?.username || "";
     console.log("currentUser:", currentUserId, currentUserName);
+    const { getToken } = useAuth();
 
-    const socket = io("http://localhost:3001")
+    const socket = io("http://localhost:3001", {
+        withCredentials: true
+    })
 
     const wrapperRef = useCallback((wrapper: HTMLDivElement | null) => {
         if (wrapper == null) return;
@@ -163,9 +167,13 @@ export const DocumentDetail = () => {
         // call PUT /document API to get shared users
         const updateSharedUsers = async (email: string) => {
             try {
+                const token = await getToken();
                 const response = await fetch("http://localhost:3000/document", {
                     method: "PUT",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
                     body: JSON.stringify({
                         id: id,
                         sharedWith: [email]
