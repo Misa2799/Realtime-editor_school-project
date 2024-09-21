@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "@clerk/clerk-react";
 
 interface Document {
 	id: string;
@@ -20,12 +21,18 @@ export const DocumentList = () => {
 	const [renameDocumentId, setRenameDocumentId] = useState<string | null>(null);
 	const [newName, setNewName] = useState("");
 	const API_URL = "http://localhost:3000/document"; // Ruta del endpoint para los requests
+    const { getToken } = useAuth();
 
 	// Fetch de documentos desde el backend
 	useEffect(() => {
 		const fetchDocuments = async () => {
 			try {
-				const response = await fetch(API_URL);
+                const token = await getToken();
+				const response = await fetch(API_URL, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
 				if (!response.ok) {
 					throw new Error("Failed to fetch documents");
 				}
