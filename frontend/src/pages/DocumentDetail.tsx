@@ -72,11 +72,28 @@ export const DocumentDetail = () => {
     useEffect (() => {
         socket.emit("join-room", id);
 
-        socket.on("send-changes", (data: any) => {
+        socket.on("send-changes", (data: any, range: any, editorId, editorUserName) => {
             console.log("This is socket",data)
+
+            console.log("received-range(useEffect)", range);
+            console.log("editorId(useEffect)", editorId);
+            console.log("editorUserName(useEffect)", editorUserName);
 
             setDelta(data)
             console.log("received-delta(useEffect)", receivedDelta);
+
+            const cursorColor = generateRandomColor();
+            
+            // FIXME: using the same code as the one inside send-selection-changes, but it's not working
+            if (quill != undefined) {
+                // don't show cursor for current user
+                if (editorId != currentUserId) {
+                    const cursors: any = quill.getModule("cursors");
+                    cursors.createCursor(editorId, editorUserName, cursorColor);
+                    cursors.moveCursor(editorId, range);
+                    cursors.toggleFlag(editorId, true);
+                }   
+            }
         })
 
         socket.on("send-selection-changes", (range, editorId, editorUserName) => {

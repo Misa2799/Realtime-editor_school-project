@@ -38,8 +38,10 @@ io.on("connection", (socket) => {
         console.log("document id:", id);
         console.log("editor id:", editorId);
         console.log("editor username:", editorUserName);
-        
+
         socket.broadcast.to(id).emit("send-selection-changes", range, editorId, editorUserName);
+        // send selection changes info with send-changes as well to update the cursor while a user is typing
+        socket.broadcast.to(id).emit("send-changes", "", range, editorId, editorUserName);
     })
 
     socket.on("disconnect", () => {
