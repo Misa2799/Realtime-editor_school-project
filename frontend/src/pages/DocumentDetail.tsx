@@ -120,6 +120,7 @@ export const DocumentDetail = () => {
 
         return () => {
             socket.off("send-changes")
+            socket.off("send-selection-changes")
         }
     }, [receivedDelta]);
 
