@@ -158,11 +158,39 @@ export const DocumentDetail = () => {
         const togglePopup = () => {
             setIsPopupOpen(!isPopupOpen);
         };
+
+        // call PUT /document API to get shared users
+        const updateSharedUsers = async (email: string) => {
+            try {
+                const response = await fetch("http://localhost:3000/document", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({
+                        id: id,
+                        sharedWith: [email]
+                    }),
+                });
+                if (response.ok) {
+                    alert(`Shared with user: ${email}`);
+                    console.log("Shared with user: ", email);
+                } else {
+                    alert(`Error while sharing with user: ${email}`);
+                    console.log("Error while sharing with user: ", email);
+                }
+            } catch {
+                alert("Error while fetching shared users");
+                console.log("Error while fetching shared users")
+            }
+        }
     
         // function for share
         const handleShare = () => {
             console.log(`Sharing to: ${email}`);
+            updateSharedUsers(email);
+
             setIsPopupOpen(false); // close pop up after share
+            setEmail(''); // clear email after share
         };
 
     return (
