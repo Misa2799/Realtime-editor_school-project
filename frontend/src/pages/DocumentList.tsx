@@ -72,9 +72,11 @@ export const DocumentList = () => {
 		if (!renameDocumentId) return;
 
 		try {
+            const token = await getToken();
 			const response = await fetch(API_URL, {
 				method: "PUT",
 				headers: {
+                    Authorization: `Bearer ${token}`,
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
