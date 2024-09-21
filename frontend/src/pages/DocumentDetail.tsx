@@ -169,10 +169,41 @@ export const DocumentDetail = () => {
     setIsPopupOpen(!isPopupOpen);
   };
 
+  // call PUT /document API to get shared users
+  const updateSharedUsers = async (email: string) => {
+    try {
+      const token = await getToken();
+      const response = await fetch("http://localhost:3000/document", {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: id,
+          sharedWith: [email],
+        }),
+      });
+      if (response.ok) {
+        alert(`Shared with user: ${email}`);
+        console.log("Shared with user: ", email);
+      } else {
+        alert(`Error while sharing with user: ${email}`);
+        console.log("Error while sharing with user: ", email);
+      }
+    } catch {
+      alert("Error while fetching shared users");
+      console.log("Error while fetching shared users");
+    }
+  };
+
   // function for share
   const handleShare = () => {
     console.log(`Sharing to: ${email}`);
+    updateSharedUsers(email);
+
     setIsPopupOpen(false); // close pop up after share
+    setEmail(""); // clear email after share
   };
 
   // function to cancel document and go back to List page
@@ -249,7 +280,7 @@ export const DocumentDetail = () => {
 
       {/* Text Editor */}
       <div
-        className="container border-2 rounded-lg p-4 ml-8"
+        className="container border-2 rounded-lg p-4 mx-auto"
         style={{ borderColor: "#5c840c" }}
         ref={wrapperRef}
       ></div>

@@ -1,11 +1,12 @@
-import React, { ReactNode } from "react";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type ModalProps = {
   setIsOpen: (isOpen: boolean) => void;
 };
 
 const CancelModal = ({ setIsOpen }: ModalProps) => {
+  const navigate = useNavigate();
+
   return (
     <>
       <div
@@ -27,7 +28,7 @@ const CancelModal = ({ setIsOpen }: ModalProps) => {
               console.log("yes is clicked");
               setIsOpen(false);
 
-              redirect("/document");
+              navigate("/document");
             }}
           >
             YES
