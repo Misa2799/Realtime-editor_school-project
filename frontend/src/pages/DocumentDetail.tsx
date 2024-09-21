@@ -5,6 +5,10 @@ import "quill/dist/quill.snow.css";
 import { FaShareAlt } from "react-icons/fa";
 import { Button } from "../components/Button";
 import CancelModal from "../components/CancelModal";
+import { io } from "socket.io-client";
+import QuillCursors from "quill-cursors";
+import { useUser } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/clerk-react";
 
 const TOOLBAR_OPTIONS = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -24,6 +28,18 @@ export const DocumentDetail = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [receivedDelta, setDelta] = useState<any>();
+  const [quill, setQuill] = useState<Quill>();
+
+  const { user } = useUser();
+  const currentUserId = user?.id || "";
+  const currentUserName = user?.username || "";
+  console.log("currentUser:", currentUserId, currentUserName);
+  const { getToken } = useAuth();
+
+  const socket = io("http://localhost:3001", {
+    withCredentials: true,
+  });
 
   const wrapperRef = useCallback((wrapper: HTMLDivElement | null) => {
     if (wrapper == null) return;
@@ -31,8 +47,95 @@ export const DocumentDetail = () => {
     wrapper.innerHTML = "";
     const editor = document.createElement("div");
     wrapper.append(editor);
-    new Quill(editor, { theme: "snow", modules: { toolbar: TOOLBAR_OPTIONS } });
+    Quill.register("modules/cursors", QuillCursors);
+    const quill = new Quill(editor, {
+      theme: "snow",
+      modules: {
+        cursors: true,
+        toolbar: TOOLBAR_OPTIONS,
+      },
+    });
+    setQuill(quill);
+
+    quill.on("text-change", (delta: any, oldDelta: any, source: any) => {
+      if (source === "user") {
+        console.log("text-changed", delta, oldDelta, source);
+        socket.emit("send-changes", delta, id);
+      }
+    });
+
+    quill.on("selection-change", (range: any, oldRange: any, source: any) => {
+      if (source === "user") {
+        console.log("selection-changed", range, oldRange, source);
+        socket.emit(
+          "send-selection-changes",
+          range,
+          id,
+          currentUserId,
+          currentUserName
+        );
+      }
+    });
   }, []);
+
+  //socket.io-client
+  useEffect(() => {
+    socket.emit("join-room", id);
+
+    socket.on(
+      "send-changes",
+      (data: any, range: any, editorId, editorUserName) => {
+        console.log("This is socket", data);
+
+        console.log("received-range(useEffect)", range);
+        console.log("editorId(useEffect)", editorId);
+        console.log("editorUserName(useEffect)", editorUserName);
+
+        setDelta(data);
+        console.log("received-delta(useEffect)", receivedDelta);
+
+        const cursorColor = generateRandomColor();
+
+        // FIXME: using the same code as the one inside send-selection-changes, but it's not working
+        if (quill != undefined) {
+          // don't show cursor for current user
+          if (editorId != currentUserId) {
+            const cursors: any = quill.getModule("cursors");
+            cursors.createCursor(editorId, editorUserName, cursorColor);
+            cursors.moveCursor(editorId, range);
+            cursors.toggleFlag(editorId, true);
+          }
+        }
+      }
+    );
+
+    socket.on("send-selection-changes", (range, editorId, editorUserName) => {
+      console.log("received-selection: ", range);
+      console.log("editorId: ", editorId);
+      console.log("editorUserName: ", editorUserName);
+
+      const cursorColor = generateRandomColor();
+
+      if (quill != undefined) {
+        // don't show cursor for current user
+        if (editorId != currentUserId) {
+          const cursors: any = quill.getModule("cursors");
+          cursors.createCursor(editorId, editorUserName, cursorColor);
+          cursors.moveCursor(editorId, range);
+          cursors.toggleFlag(editorId, true);
+        }
+      }
+    });
+
+    if (quill != undefined) {
+      quill.updateContents(receivedDelta);
+    }
+
+    return () => {
+      socket.off("send-changes");
+      socket.off("send-selection-changes");
+    };
+  }, [receivedDelta]);
 
   useEffect(() => {
     // add class Tailwind for `ql-container`
@@ -146,10 +249,16 @@ export const DocumentDetail = () => {
 
       {/* Text Editor */}
       <div
-        className="container border-2 rounded-lg p-4 mx-auto"
+        className="container border-2 rounded-lg p-4 ml-8"
         style={{ borderColor: "#5c840c" }}
         ref={wrapperRef}
       ></div>
     </div>
   );
 };
+
+function generateRandomColor(): string {
+  const randomColor = Math.floor(Math.random() * 0xffffff).toString(16);
+
+  return `#${randomColor.padStart(6, "0")}`;
+}

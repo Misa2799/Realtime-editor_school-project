@@ -7,21 +7,16 @@ import { DocumentModel, getDocs } from "../models/document";
 import { get as getFromModel } from "../models/user";
 
 export const post = async (req: Request, res: Response) => {
-  // const loggedinId = req.query.loggedinId;
+  const { loggedInUserId } = req;
 
-  // if (!loggedinId) {
-  //   res.status(401).send("No User");
-  //   return;
-  // }
+  if (!loggedInUserId) {
+    res.status(401).send("No User");
+    return;
+  }
 
-  const { authorId, name } = req.body;
+  const { name } = req.body;
 
-  // if (authorId !== loggedinId) {
-  //   res.status(401).send("Unauthorized");
-  //   return;
-  // }
-
-  await DocumentModel.createDoc(authorId, name);
+  await DocumentModel.createDoc(loggedInUserId, name);
 
   res.status(201).send("Document created");
 };
@@ -68,16 +63,14 @@ export const clear = async (req: Request, res: Response) => {
 };
 
 export const get = async (req: Request, res: Response) => {
-  // FIXME: uncomment this line after merging the PR that implemented auth with Clerk
-  // const { loggedinId } = req.loggedInUserId;
-  const loggedinId = "1";
+  const { loggedInUserId } = req;
 
-  if (!loggedinId) {
+  if (!loggedInUserId) {
     res.status(401).send("No User");
     return;
   }
 
-  const docs = await getDocs(loggedinId);
+  const docs = await getDocs(loggedInUserId);
 
   res.status(200).send(docs);
 };
