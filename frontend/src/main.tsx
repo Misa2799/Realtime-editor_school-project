@@ -4,7 +4,8 @@ import './index.css'
 import { Providers } from './contexts/Providers'
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  // to prevent double rendering, comment out the <StrictMode> tag
+  // <StrictMode>
     <Providers />
-  </StrictMode>,
+  // {/* </StrictMode> */}
 )

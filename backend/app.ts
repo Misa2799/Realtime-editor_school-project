@@ -32,7 +32,9 @@ io.on("connection", (socket) => {
 	socket.on("send-changes", (delta, id) => {
         console.log("new text:", delta);
         console.log("document id:", id);
-		socket.broadcast.to(id).emit("send-changes",delta);
+
+		// socket.broadcast.to(id).emit("send-changes", delta);
+        socket.broadcast.to(id).emit("send-changes", delta);
     });
 
     socket.on("send-selection-changes", (range, id, editorId, editorUserName) => {
@@ -42,8 +44,6 @@ io.on("connection", (socket) => {
         console.log("editor username:", editorUserName);
 
         socket.broadcast.to(id).emit("send-selection-changes", range, editorId, editorUserName);
-        // send selection changes info with send-changes as well to update the cursor while a user is typing
-        socket.broadcast.to(id).emit("send-changes", "", range, editorId, editorUserName);
     })
 
     socket.on("disconnect", () => {
