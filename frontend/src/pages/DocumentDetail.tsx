@@ -10,6 +10,7 @@ import QuillCursors from "quill-cursors";
 import { useUser } from "@clerk/clerk-react";
 import { useAuth } from "@clerk/clerk-react";
 import SaveModal from "../components/SaveModal";
+import { useDocuments } from "../context/DocumentContext";
 
 const TOOLBAR_OPTIONS = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -25,6 +26,8 @@ const TOOLBAR_OPTIONS = [
 
 export const DocumentDetail = () => {
   const { id } = useParams();
+  const { documentsFromContext } = useDocuments();
+  const shownDocument = documentsFromContext.find((doc) => doc.id === id);
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [email, setEmail] = useState("");
@@ -255,8 +258,8 @@ export const DocumentDetail = () => {
         className="flex items-center border-2 rounded-full p-2 w-auto m-8"
         style={{ borderColor: "#5c840c" }}
       >
-        <div className="flex-1 px-2 py-2 text-gray-700">
-          <h1>Document Detail: {id}</h1>
+        <div className="flex-1 px-2 py-2 text-gray-700 font-bold" style={{ color: "#5c840c" }}>
+          <h1>{shownDocument?.name}</h1>
         </div>
         <div className="saveBtn mx-8">
           <Button
