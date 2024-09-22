@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom"; // Importamos useNavigate
+import { useDocuments } from "../context/DocumentContext";
 
 interface Document {
 	id: string;
@@ -26,6 +27,7 @@ export const DocumentList = () => {
 	const API_URL = "http://localhost:3000/document"; // Ruta del endpoint de la API
 	const { getToken } = useAuth();
 	const navigate = useNavigate(); // Inicializamos useNavigate para la navegación
+    const { documentsFromContext, fetchDocumentsFromContext } = useDocuments();
 
 	// Función para obtener documentos desde el backend
 	const fetchDocuments = async () => {
@@ -50,6 +52,7 @@ export const DocumentList = () => {
 	// Fetch de documentos desde el backend
 	useEffect(() => {
 		fetchDocuments();
+        fetchDocumentsFromContext();
 	}, []);
 
 	// Función para mostrar/ocultar el menú desplegable

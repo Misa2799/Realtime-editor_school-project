@@ -1,10 +1,13 @@
 import { ClerkProvider } from "./ClerkProvider";
 import { RouterProvider } from "./RouterProvider";
+import { DocumentProvider } from "../context/DocumentContext";
 
 export function Providers() {
     return (
         <ClerkProvider>
-            <RouterProvider />
+            <DocumentProvider>
+                <RouterProvider />
+            </DocumentProvider>
         </ClerkProvider>
     );
 }
