@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom"; // Importamos useNavigate
 import { useDocuments } from "../context/DocumentContext";
+import { useUser } from "@clerk/clerk-react";
 
 interface Document {
 	id: string;
@@ -28,6 +29,7 @@ export const DocumentList = () => {
 	const { getToken } = useAuth();
 	const navigate = useNavigate(); // Inicializamos useNavigate para la navegación
     const { documentsFromContext, fetchDocumentsFromContext } = useDocuments();
+    const { isSignedIn } = useUser();
 
 	// Función para obtener documentos desde el backend
 	const fetchDocuments = async () => {
@@ -216,6 +218,13 @@ export const DocumentList = () => {
 	}, [closeMenus, documents]);
 
 	return (
+        <>
+        <div className={`fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-40 ${isSignedIn ? "hidden" : ""}`} style={{ marginTop: '60px' }}>
+          <div className="bg-white p-8 rounded shadow-lg text-center">
+            <h2 className="text-2xl font-semibold mb-4">Please sign in or sign up first</h2>
+          </div>
+        </div>
+
 		<div className="p-5 flex flex-col items-center">
 			{/* Barra de alternancia */}
 			<div className="flex bg-gray-200 rounded-full p-2 mb-5 w-96">
@@ -372,5 +381,6 @@ export const DocumentList = () => {
 				</div>
 			)}
 		</div>
+        </>
 	);
 };

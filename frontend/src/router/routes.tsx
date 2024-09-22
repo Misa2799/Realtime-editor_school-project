@@ -1,9 +1,20 @@
 import { AuthenticateWithRedirectCallback } from "@clerk/clerk-react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, useNavigate } from "react-router-dom";
 import { RootLayout } from "../layouts/RootLayout";
 import { DocumentDetail } from "../pages/DocumentDetail";
 import { DocumentList } from "../pages/DocumentList";
 import ProtectedRoutes from "./ProtectedRoutes";
+import { useEffect } from "react";
+
+const SiginInRedirect = () => {
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        navigate("/document");
+    })
+
+    return <AuthenticateWithRedirectCallback />;
+}
 
 export const router = createBrowserRouter([
     {
@@ -28,6 +39,6 @@ export const router = createBrowserRouter([
     },
     {
         path: "/sign-in",
-        element: <AuthenticateWithRedirectCallback />
+        element: <SiginInRedirect />
     }
 ]);
