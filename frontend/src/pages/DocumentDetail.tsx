@@ -83,6 +83,19 @@ export const DocumentDetail = () => {
     });
   }, []);
 
+  // called only when the document is loaded
+  useEffect(() => {
+    let deltaString = shownDocument?.content;
+    if (deltaString) {
+        deltaString = deltaString.replace(/\n/g, "\\n")
+        const delta = JSON.parse(deltaString);
+
+        if (quill != undefined) {
+            quill?.setContents(delta);
+        }
+    }
+  })
+
   //socket.io-client
   useEffect(() => {
     socket.emit("join-room", id);
