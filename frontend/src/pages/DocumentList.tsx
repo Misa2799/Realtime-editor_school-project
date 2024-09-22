@@ -16,44 +16,47 @@ export const DocumentList = () => {
 	const [menuVisible, setMenuVisible] = useState<boolean[]>([]);
 	const [documents, setDocuments] = useState<Document[]>([]);
 	const [showRenameModal, setShowRenameModal] = useState(false);
-	const [showDeleteModal, setShowDeleteModal] = useState(false); // Modal para eliminar documento
-	const [deleteDocumentId, setDeleteDocumentId] = useState<string | null>(null); // Estado para el ID del documento a eliminar
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [showCreateModal, setShowCreateModal] = useState(false);
+	const [deleteDocumentId, setDeleteDocumentId] = useState<string | null>(null);
 	const [renameDocumentId, setRenameDocumentId] = useState<string | null>(null);
-	const [newName, setNewName] = useState("");
-	const API_URL = "http://localhost:3000/document"; // Ruta del endpoint para los requests
-    const { getToken } = useAuth();
+	const [newDocumentName, setNewDocumentName] = useState(""); // Para crear documentos
+	const [newName, setNewName] = useState(""); // Para renombrar documentos
+	const API_URL = "http://localhost:3000/document"; // Ruta del endpoint de la API
+	const { getToken } = useAuth();
+
+	// Función para obtener documentos desde el backend
+	const fetchDocuments = async () => {
+		try {
+			const token = await getToken();
+			const response = await fetch(API_URL, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+			if (!response.ok) {
+				throw new Error("Failed to fetch documents");
+			}
+			const data: Document[] = await response.json();
+			setDocuments(data);
+			setMenuVisible(Array(data.length).fill(false));
+		} catch (error) {
+			console.error("Error fetching documents:", error);
+		}
+	};
 
 	// Fetch de documentos desde el backend
 	useEffect(() => {
-		const fetchDocuments = async () => {
-			try {
-                const token = await getToken();
-				const response = await fetch(API_URL, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
-				if (!response.ok) {
-					throw new Error("Failed to fetch documents");
-				}
-				const data: Document[] = await response.json();
-				setDocuments(data);
-				setMenuVisible(Array(data.length).fill(false));
-			} catch (error) {
-				console.error("Error fetching documents:", error);
-			}
-		};
-
 		fetchDocuments();
 	}, []);
 
-	// Función para mostrar/ocultar menú desplegable
+	// Función para mostrar/ocultar el menú desplegable
 	const toggleMenu = (index: number) => {
 		const updatedMenus = menuVisible.map((visible, i) => (i === index ? !visible : false));
 		setMenuVisible(updatedMenus);
 	};
 
-	// Función para cerrar todos los menús al hacer clic fuera
+	// Función para cerrar todos los menús desplegables al hacer clic fuera
 	const closeMenus = (e: any) => {
 		if (!e.target.classList.contains("menu-btn")) {
 			setMenuVisible(Array(documents.length).fill(false));
@@ -72,15 +75,15 @@ export const DocumentList = () => {
 		if (!renameDocumentId) return;
 
 		try {
-            const token = await getToken();
+			const token = await getToken();
 			const response = await fetch(API_URL, {
 				method: "PUT",
 				headers: {
-                    Authorization: `Bearer ${token}`,
+					Authorization: `Bearer ${token}`,
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					id: renameDocumentId, // Enviamos el id del documento y el nuevo nombre en el body
+					id: renameDocumentId,
 					name: newName,
 				}),
 			});
@@ -108,16 +111,13 @@ export const DocumentList = () => {
 		if (!deleteDocumentId) return;
 
 		try {
-			// Agregamos un console.log del id que se enviará al DELETE request
-			console.log(`Eliminando documento con id: ${deleteDocumentId}`);
-
-            const token = await getToken();
+			const token = await getToken();
 			// Hacemos el DELETE request al backend con el id en la URL
 			const response = await fetch(`${API_URL}?id=${deleteDocumentId}`, {
 				method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
 			});
 
 			if (!response.ok) {
@@ -139,6 +139,50 @@ export const DocumentList = () => {
 	const openDeleteModal = (docId: string) => {
 		setDeleteDocumentId(docId);
 		setShowDeleteModal(true);
+	};
+
+	// Función para abrir el modal de creación de documento
+	const openCreateModal = () => {
+		setShowCreateModal(true);
+	};
+
+	// Función para crear un nuevo documento (POST request)
+	const handleCreateDocument = async () => {
+		try {
+			const token = await getToken();
+			const requestBody = {
+				name: newDocumentName, // Enviar solo el nombre del nuevo documento
+			};
+
+			// Hacemos el POST request al backend para crear un nuevo documento
+			const response = await fetch(API_URL, {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(requestBody),
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to create document");
+			}
+
+			// Si el POST es exitoso, volvemos a hacer el GET para renderizar el nuevo documento
+			await fetchDocuments();
+
+			// Limpiar el estado después de crear el documento
+			setShowCreateModal(false);
+			setNewDocumentName("");
+		} catch (error) {
+			console.error("Error creating document:", error);
+		}
+	};
+
+	// Función para cerrar el modal de creación de documento
+	const closeCreateModal = () => {
+		setShowCreateModal(false);
+		setNewDocumentName("");
 	};
 
 	// Función para cerrar el modal de renombrar
@@ -186,7 +230,10 @@ export const DocumentList = () => {
 			{/* Grilla de documentos */}
 			<div className="grid grid-cols-4 gap-5 max-w-5xl w-full justify-items-center">
 				{activeTab === "My Documents" && (
-					<div className="flex flex-col justify-center items-center w-44 h-56 bg-yellow-400 text-gray-900 rounded-lg cursor-pointer shadow-lg">
+					<div
+						className="flex flex-col justify-center items-center w-44 h-56 bg-yellow-400 text-gray-900 rounded-lg cursor-pointer shadow-lg"
+						onClick={openCreateModal}
+					>
 						<span className="text-4xl mb-2">+</span>
 						<span>Create Document</span>
 					</div>
@@ -226,6 +273,36 @@ export const DocumentList = () => {
 						</div>
 					))}
 			</div>
+
+			{/* Modal de creación de documento */}
+			{showCreateModal && (
+				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+					<div className="bg-gray-100 p-6 rounded-lg shadow-lg w-96">
+						<h2 className="text-2xl font-bold mb-4">New Note Book</h2>
+						<input
+							type="text"
+							value={newDocumentName}
+							onChange={(e) => setNewDocumentName(e.target.value)}
+							className="w-full p-2 mb-4 border rounded"
+							placeholder="Enter name"
+						/>
+						<div className="flex justify-end space-x-4">
+							<button
+								className="bg-gray-400 text-white py-2 px-4 rounded hover:bg-gray-500"
+								onClick={closeCreateModal}
+							>
+								Cancel
+							</button>
+							<button
+								className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
+								onClick={handleCreateDocument}
+							>
+								Create
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 
 			{/* Modal de renombrar */}
 			{showRenameModal && (
