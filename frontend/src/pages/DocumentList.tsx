@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom"; // Importamos useNavigate
 
 interface Document {
 	id: string;
@@ -24,6 +25,7 @@ export const DocumentList = () => {
 	const [newName, setNewName] = useState(""); // Para renombrar documentos
 	const API_URL = "http://localhost:3000/document"; // Ruta del endpoint de la API
 	const { getToken } = useAuth();
+	const navigate = useNavigate(); // Inicializamos useNavigate para la navegación
 
 	// Función para obtener documentos desde el backend
 	const fetchDocuments = async () => {
@@ -198,6 +200,11 @@ export const DocumentList = () => {
 		setDeleteDocumentId(null);
 	};
 
+	// Función para redirigir a la página de detalle del documento
+	const handleDocumentClick = (docId: string) => {
+		navigate(`/document/${docId}`);
+	};
+
 	useEffect(() => {
 		window.addEventListener("click", closeMenus);
 		return () => {
@@ -244,13 +251,17 @@ export const DocumentList = () => {
 					.filter((doc) => (activeTab === "My Documents" ? !doc.isShared : doc.isShared))
 					.map((doc, index) => (
 						<div
-							className="relative w-44 h-56 bg-green-600 text-white rounded-lg flex justify-center items-center shadow-lg"
+							className="relative w-44 h-56 bg-green-600 text-white rounded-lg flex justify-center items-center shadow-lg cursor-pointer"
 							key={doc.id}
+							onClick={() => handleDocumentClick(doc.id)} // Redirigir al hacer clic en el documento
 						>
 							<span>{doc.name}</span>
 							<button
 								className="absolute top-2 right-2 text-xl menu-btn"
-								onClick={() => toggleMenu(index)}
+								onClick={(e) => {
+									e.stopPropagation(); // Evitar la redirección cuando se hace clic en el menú
+									toggleMenu(index);
+								}}
 							>
 								⋮
 							</button>
