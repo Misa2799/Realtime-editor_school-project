@@ -36,16 +36,20 @@ export const update = async (req: Request, res: Response) => {
 
     // find user based on email
     let userIds: string[] = [];
-    sharedWith.forEach(async (email: string) => {
+    for (const email of sharedWith) {
       const user = await getFromModel(email);
       if (!user?.id) {
         res.status(404).send("User not found");
         return
       }
       userIds.push(user?.id);
-    });
+    }
 
     // update the collaboration sessions table
+    if (userIds.length === 0) {
+      res.status(404).send("User not found");
+      return;
+    }
     const updatedShareDoc = await updateSharedDoc(id, userIds);
   }
 
