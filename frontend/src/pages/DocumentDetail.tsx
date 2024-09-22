@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
@@ -9,6 +9,7 @@ import { io } from "socket.io-client";
 import QuillCursors from "quill-cursors";
 import { useUser } from "@clerk/clerk-react";
 import { useAuth } from "@clerk/clerk-react";
+import SaveModal from "../components/SaveModal";
 
 const TOOLBAR_OPTIONS = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -27,7 +28,8 @@ export const DocumentDetail = () => {
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [email, setEmail] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
+  const [isCancelOpen, setIsCancelOpen] = useState(false);
+  const [isSaveOpen, setIsSaveOpen] = useState(false);
   const [receivedDelta, setDelta] = useState<any>();
   const [quill, setQuill] = useState<Quill>();
 
@@ -36,6 +38,7 @@ export const DocumentDetail = () => {
   const currentUserName = user?.username || "";
   console.log("currentUser:", currentUserId, currentUserName);
   const { getToken } = useAuth();
+  const navigate = useNavigate();
 
   const socket = io("http://localhost:3001", {
     withCredentials: true,
@@ -208,15 +211,11 @@ export const DocumentDetail = () => {
 
   // function to cancel document and go back to List page
   const handleCancelModal = () => {
-    console.log("cancel is clicked");
-    // display modal and set "Cancel a document?", Yes and No button
-    setIsOpen(true);
+    setIsCancelOpen(true);
   };
 
   // function to send data to DB
   const handleSave = async () => {
-    console.log("save is clicked");
-
     // get delta with quill and convert to string
     const delta = quill?.getContents();
     const deltaString = JSON.stringify(delta);
@@ -240,8 +239,7 @@ export const DocumentDetail = () => {
       });
 
       if (response.ok) {
-        alert("Document saved successfully!");
-        console.log("Document saved:", deltaString);
+        setIsSaveOpen(true);
       } else {
         alert("Error saving the document");
         console.log("Error response:", await response.json());
@@ -267,13 +265,14 @@ export const DocumentDetail = () => {
             onClick={handleCancelModal}
             children={"CANCEL"}
           />
-          {isOpen && <CancelModal setIsOpen={setIsOpen} />}
+          {isCancelOpen && <CancelModal setIsCancelOpen={setIsCancelOpen} />}
 
           <Button
             className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             onClick={handleSave}
             children={"SAVE"}
           />
+          {isSaveOpen && <SaveModal setIsSaveOpen={setIsSaveOpen} />}
         </div>
         <div
           className="p-2 cursor-pointer"
