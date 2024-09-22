@@ -82,10 +82,30 @@ export const DocumentDetail = () => {
         }
     })
 
+    // send and receive selection changes
     quillEditor.on("selection-change", (range: any, oldRange: any, source: any) => {
-        // console.log("selection-changed", range, oldRange, source);
-        // socket.emit("send-selection-changes", range, id, currentUserId, currentUserName);
+        console.log("selection-changed", range, oldRange, source);
+        socket.emit("send-selection-changes", range, id, currentUserId, currentUserName);
     });
+
+    socket.on("send-selection-changes", (range: any, editorId: string, editorUserName: string) => {
+        console.log("received selection:", range);
+        
+        const cursorColor = generateRandomColor();
+
+        if (quillEditor) {
+            // don't show the current user's cursor
+            if (editorId === currentUserId) {
+                return;
+            }
+            const cursors: any = quillEditor.getModule("cursors");
+            cursors.createCursor(editorId, editorUserName, cursorColor);
+            cursors.moveCursor(editorId, range);
+            cursors.toggleFlag(editorId, true);
+        } else {
+            console.log("quill is not ready")
+        }
+    })
 
     // clean up
     return () => {
