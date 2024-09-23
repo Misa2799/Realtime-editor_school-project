@@ -28,6 +28,11 @@ io.on("connection", (socket) => {
         console.log("joined room: ", documentId);
         socket.join(documentId);
     });
+
+    socket.on("leave-room", (documentId) => {
+        console.log("left room: ", documentId);
+        socket.leave(documentId);
+    })
 	
 	socket.on("send-changes", (delta, id) => {
         console.log("new text:", delta);

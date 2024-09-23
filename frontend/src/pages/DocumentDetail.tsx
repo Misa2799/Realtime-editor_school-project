@@ -253,6 +253,11 @@ export const DocumentDetail = () => {
     }
   };
 
+  const handleCancelModalYes = () => {
+    console.log("Canceling the document");
+    socket.emit("leave-room", id)
+  }
+
   return (
     <div>
       <div
@@ -268,7 +273,7 @@ export const DocumentDetail = () => {
             onClick={handleCancelModal}
             children={"CANCEL"}
           />
-          {isCancelOpen && <CancelModal setIsCancelOpen={setIsCancelOpen} />}
+          {isCancelOpen && <CancelModal setIsCancelOpen={setIsCancelOpen} onButtonClick={handleCancelModalYes} />}
 
           <Button
             className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-[#5C840C] dark:hover:bg-[#67925B] dark:focus:ring-[#67925B]"
