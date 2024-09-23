@@ -3,7 +3,7 @@ import {
   clearSharedDoc,
   updateSharedDoc,
 } from "../models/collaboration-sessions";
-import { DocumentModel, getDocs } from "../models/document";
+import { DocumentModel, getDocs, getDoc } from "../models/document";
 import { get as getFromModel } from "../models/user";
 
 export const post = async (req: Request, res: Response) => {
@@ -78,3 +78,11 @@ export const get = async (req: Request, res: Response) => {
 
   res.status(200).send(docs);
 };
+
+export const getById = async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  const doc = await getDoc(id);
+
+  res.status(200).send(doc);
+}

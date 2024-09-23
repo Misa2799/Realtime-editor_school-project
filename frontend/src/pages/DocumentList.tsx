@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth, useUser } from "@clerk/clerk-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Importamos useNavigate
-import { useDocuments } from "../context/DocumentContext";
-import { useUser } from "@clerk/clerk-react";
+import { useDocuments } from "../contexts/DocumentContext";
 
 interface Document {
 	id: string;
@@ -281,13 +280,19 @@ export const DocumentList = () => {
 								<div className="absolute top-10 right-2 bg-white text-black border border-gray-300 rounded shadow-lg z-10 w-24">
 									<button
 										className="block w-full px-3 py-1 text-left hover:bg-gray-100"
-										onClick={() => openRenameModal(doc.id, doc.name)}
+										onClick={(e) => {
+                                            e.stopPropagation();
+                                            openRenameModal(doc.id, doc.name);
+                                        }}
 									>
 										Rename
 									</button>
 									<button
 										className="block w-full px-3 py-1 text-left hover:bg-gray-100"
-										onClick={() => openDeleteModal(doc.id)} // Abrir el modal de eliminación
+										onClick={(e) => {
+                                            e.stopPropagation();
+                                            openDeleteModal(doc.id)
+                                        }}
 									>
 										Delete
 									</button>

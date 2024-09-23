@@ -72,6 +72,11 @@ const deleteDoc = async (documentId: string) => {
 
 export const DocumentModel = { createDoc, updateDoc, deleteDoc };
 
+export const getDoc = async (documentId: string) => {
+  const doc = await Document.findById(documentId);
+  return doc;
+}
+
 export const getDocs = async (authorId: string) => {
   let allDocs = <GetDocumentResponse[]>[];
 
