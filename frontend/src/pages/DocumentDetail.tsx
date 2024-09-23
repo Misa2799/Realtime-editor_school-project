@@ -23,6 +23,11 @@ const TOOLBAR_OPTIONS = [
   ["clean"],
 ];
 
+interface Avatar {
+    name: string;
+    color: string;
+}
+
 export const DocumentDetail = () => {
   const { id } = useParams();
   const { documentsFromContext } = useDocuments();
@@ -35,6 +40,7 @@ export const DocumentDetail = () => {
   const [receivedDelta, setDelta] = useState<any>();
   const [quill, setQuill] = useState<Quill | null>(null);
   const quillRef = useRef<HTMLDivElement>(null);
+  const [sharedUsers, setSharedUsers] = useState<Avatar[]>([]);
 
   const { user } = useUser();
   const currentUserId = user?.id || "";
@@ -102,6 +108,13 @@ export const DocumentDetail = () => {
             cursors.createCursor(editorId, editorUserName, cursorColor);
             cursors.moveCursor(editorId, range);
             cursors.toggleFlag(editorId, true);
+
+            setSharedUsers((prev) => {
+                if (!prev.some(user => user.name === editorUserName)) {
+                    return [...prev, { name: editorUserName, color: cursorColor }];
+                }
+                return prev;
+            });
         } else {
             console.log("quill is not ready")
         }
@@ -294,6 +307,17 @@ export const DocumentDetail = () => {
           </button>
         </div>
       )}
+
+    <div className="flex items-center">
+      {/* Round Avatar */}
+      {
+        sharedUsers.map((user, index) => (
+          <div key={index} className="w-12 h-12 flex items-center justify-center rounded-full text-white border-2 border-gray-300" style={{ backgroundColor: user.color}}>
+            {user.name[0].toUpperCase()}
+          </div>
+        ))
+      }
+    </div>
 
       {/* Text Editor */}
       <div
