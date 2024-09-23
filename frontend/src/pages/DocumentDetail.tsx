@@ -123,7 +123,10 @@ export const DocumentDetail = () => {
     // clean up
     return () => {
         socket.off("send-changes");
+        socket.off("send-selection-changes");
+
         quillEditor.off("text-change");
+        quillEditor.off("selection-change");
     }
   }, [])
 
