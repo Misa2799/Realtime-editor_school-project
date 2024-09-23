@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth, useUser } from "@clerk/clerk-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Importamos useNavigate
-import { useDocuments } from "../context/DocumentContext";
-import { useUser } from "@clerk/clerk-react";
+import { useDocuments } from "../contexts/DocumentContext";
 
 interface Document {
 	id: string;

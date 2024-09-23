@@ -1,6 +1,6 @@
 import { ClerkProvider } from "./ClerkProvider";
+import { DocumentProvider } from "./DocumentContext";
 import { RouterProvider } from "./RouterProvider";
-import { DocumentProvider } from "../context/DocumentContext";
 
 export function Providers() {
     return (

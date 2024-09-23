@@ -9,7 +9,7 @@ import { io } from "socket.io-client";
 import { Button } from "../components/Button";
 import CancelModal from "../components/CancelModal";
 import SaveModal from "../components/SaveModal";
-import { useDocuments } from "../context/DocumentContext";
+import { Document } from "../contexts/DocumentContext";
 
 const TOOLBAR_OPTIONS = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -30,8 +30,7 @@ interface Avatar {
 
 export const DocumentDetail = () => {
   const { id } = useParams();
-  const { documentsFromContext } = useDocuments();
-  const shownDocument = documentsFromContext.find((doc) => doc.id === id);
+  const [documentFromAPI, setDocumentFromAPI] = useState<Document>();
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [email, setEmail] = useState("");
@@ -54,6 +53,20 @@ export const DocumentDetail = () => {
 
   useEffect(() => {
     console.log("useEffect called");
+
+    const fetchDocument = async () => {
+      const token = await getToken();
+      const response = await fetch("http://localhost:3000/document/" + id, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      setDocumentFromAPI(data)
+    }
+
+    fetchDocument();
 
     socket.emit("join-room", id);
 
@@ -132,7 +145,7 @@ export const DocumentDetail = () => {
 
   // called only when the document is loaded
   useEffect(() => {
-    let deltaString = shownDocument?.content;
+    let deltaString = documentFromAPI?.content;
     if (deltaString) {
         deltaString = deltaString.replace(/\n/g, "\\n")
         const delta = JSON.parse(deltaString);
@@ -265,7 +278,7 @@ export const DocumentDetail = () => {
         style={{ borderColor: "#5c840c" }}
       >
         <div className="flex-1 px-2 py-2 text-gray-700 font-bold" style={{ color: "#5c840c" }}>
-          <h1>{shownDocument?.name}</h1>
+          <h1>{documentFromAPI?.name}</h1>
         </div>
         <div className="saveBtn mx-8">
           <Button

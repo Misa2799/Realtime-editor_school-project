@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect } from "react";
 import { useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 
-interface Document {
+export interface Document {
     id: string;
     name: string;
     content: string;
