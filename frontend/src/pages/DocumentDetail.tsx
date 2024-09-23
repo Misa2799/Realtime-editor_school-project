@@ -308,7 +308,7 @@ export const DocumentDetail = () => {
         </div>
       )}
 
-    <div className="flex items-center">
+    <div className="flex items-center m-8">
       {/* Round Avatar */}
       {
         sharedUsers.map((user, index) => (
